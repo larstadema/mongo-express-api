@@ -4,7 +4,8 @@ import { createTerminus } from '@godaddy/terminus';
 import config from './config';
 import { appLoader } from './loaders';
 import { Logger } from './loaders/logger';
-import { ErrorHandler, RequestError } from './core/errors';
+import { RequestError } from './core/api-error';
+import { ErrorHandler } from './core/api-error-handler';
 
 const startServer = async () => {
   const app = express();

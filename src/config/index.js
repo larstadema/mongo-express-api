@@ -1,4 +1,5 @@
 import dotenv from 'dotenv';
+import ms from 'ms';
 
 dotenv.config();
 
@@ -13,7 +14,6 @@ if (envFound.error) {
 export default {
   port: parseInt(process.env.PORT, 10),
   databaseURL: process.env.MONGODB_URI,
-  jwtSecret: process.env.JWT_SECRET,
   hashPepper: process.env.HASH_PEPPER,
   logs: {
     level: process.env.LOG_LEVEL || 'debug',
@@ -26,5 +26,15 @@ export default {
   api: {
     prefix: '/api',
     corsOrigin: process.env.CORS_ORIGIN,
+  },
+  tokens: {
+    accessToken: {
+      issuer: process.env.JWT_ISSUER,
+      audience: process.env.JWT_AUDIENCE,
+      expiresIn: process.env.JWT_EXPIRES_IN,
+    },
+    refreshToken: {
+      expiresInMs: ms(process.env.REFRESH_TOKEN_EXPIRES_IN),
+    },
   },
 };

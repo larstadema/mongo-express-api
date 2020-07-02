@@ -6,6 +6,7 @@ export const mongooseLoader = async () => {
     useCreateIndex: true,
     useNewUrlParser: true,
     useUnifiedTopology: true,
+    useFindAndModify: false,
   });
   return connection.connection.db;
 };

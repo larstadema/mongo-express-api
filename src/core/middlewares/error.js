@@ -1,5 +1,16 @@
 import { isCelebrate } from 'celebrate';
-import { ErrorHandler, RequestError } from '../errors';
+import { ErrorHandler } from '../api-error-handler';
+import { ErrorType, RequestError } from '../api-error';
+import {
+  AuthFailureResponse,
+  AccessTokenErrorResponse,
+  NotFoundResponse,
+  BadRequestResponse,
+  ForbiddenResponse,
+  InternalErrorResponse,
+  ConflictResponse,
+  UnprocessableEntityResponse,
+} from '../api-response';
 
 const mapRequestContext = (request) => ({
   originalUrl: request.originalUrl,
@@ -29,25 +40,40 @@ export const errorMiddleware = async (error, req, res, next) => {
     requestError = new RequestError.UnprocessableEntityError(message);
   }
 
-  const isTrustedError = ErrorHandler.isTrustedError(requestError);
-
-  if (!isTrustedError) {
-    requestError = new RequestError.InternalServerError('Unknown application error');
+  if (!ErrorHandler.isTrustedError(error)) {
+    requestError = new RequestError.InternalServerError(error.message);
   }
 
-  const errorResponse = requestError.getErrorResponse();
-
+  let errorId;
   if (requestError.statusCode >= 500) {
-    errorResponse.errorCode = generateErrorId();
+    errorId = generateErrorId();
   }
 
-  await ErrorHandler.handleError(requestError, mapRequestContext(req), errorResponse.errorCode);
+  await ErrorHandler.handleError(requestError, mapRequestContext(req), errorId);
 
-  if (process.env.NODE_ENV !== 'production') {
-    errorResponse.stack = requestError.stack;
+  switch (requestError.name) {
+    case ErrorType.BAD_REQUEST:
+      return new BadRequestResponse(requestError.message).send(res);
+    case ErrorType.UNAUTHORIZED:
+      return new AuthFailureResponse(requestError.message).send(res);
+    case ErrorType.TOKEN_EXPIRED:
+      return new AccessTokenErrorResponse(requestError.message).send(res);
+    case ErrorType.FORBIDDEN:
+      return new ForbiddenResponse(requestError.message).send(res);
+    case ErrorType.NOT_FOUND:
+      return new NotFoundResponse(requestError.message, req.originalUrl).send(res);
+    case ErrorType.CONFLICT:
+      return new ConflictResponse(requestError.message).send(res);
+    case ErrorType.UNPROCESSABLE_ENTITY:
+      return new UnprocessableEntityResponse(requestError.message).send(res);
+    default: {
+      let { message } = requestError;
+
+      if (process.env.NODE_ENV === 'production') {
+        message = 'Something unexpected happened';
+      }
+
+      return new InternalErrorResponse(message, errorId).send(res);
+    }
   }
-
-  res.status(requestError.statusCode);
-
-  res.json(errorResponse);
 };

@@ -1,1 +1,0 @@
-export { UserMap } from './user';

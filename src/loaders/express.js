@@ -2,6 +2,7 @@ import morgan from 'morgan';
 import express from 'express';
 import helmet from 'helmet';
 import cors from 'cors';
+import cookieParser from 'cookie-parser';
 import routes from '../api';
 import * as middlewares from '../core/middlewares';
 import { Logger } from './logger';
@@ -19,8 +20,9 @@ export const expressLoader = async (app) => {
   );
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
+  app.use(cookieParser());
 
-  // Make sure to inlclude last (over other 3rd party middlwares that might override/bind req/res)
+  // Make sure to inlclude last (over other 3rd party middlewares that might override/bind req/res)
   app.use(
     middlewares.requestTracer({
       useHeader: true,
@@ -29,10 +31,6 @@ export const expressLoader = async (app) => {
   );
 
   app.use(config.api.prefix, routes());
-
-  app.get('/test', (req, res) => {
-    res.json({ ok: true });
-  });
 
   app.use(middlewares.notFound);
   app.use(middlewares.error);

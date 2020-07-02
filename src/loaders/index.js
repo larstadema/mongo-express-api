@@ -2,7 +2,7 @@ import { expressLoader } from './express';
 import { dependencyInjectorLoader } from './dependency-injector';
 import { Logger } from './logger';
 import { mongooseLoader } from './mongoose';
-import { userRepo } from '../domains/users';
+import { userRepo, keystoreRepo } from '../domains/accounts';
 
 export const appLoader = async ({ expressApp }) => {
   await mongooseLoader();
@@ -13,6 +13,10 @@ export const appLoader = async ({ expressApp }) => {
       {
         name: 'userRepo',
         repo: userRepo,
+      },
+      {
+        name: 'keystoreRepo',
+        repo: keystoreRepo,
       },
     ],
   });

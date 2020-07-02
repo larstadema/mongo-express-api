@@ -37,3 +37,6 @@ node_modules/
 
 # Build output
 build
+
+# ignore key
+*.pem
