@@ -1,13 +1,4 @@
-export const HttpStatusCode = {
-  OK: 200,
-  BAD_REQUEST: 400,
-  UNAUTHORIZED: 401,
-  FORBIDDEN: 403,
-  NOT_FOUND: 404,
-  CONFLICT: 409,
-  UNPROCESSABLE_ENTITY: 422,
-  INTERNAL_SERVER: 500,
-};
+import { HttpStatusCode } from './api-response';
 
 export const ErrorType = {
   BAD_REQUEST: 'BadRequestError',
@@ -17,6 +8,7 @@ export const ErrorType = {
   NOT_FOUND: 'NotFoundError',
   CONFLICT: 'ConflictError',
   UNPROCESSABLE_ENTITY: 'UnprocessableEntityError',
+  TOO_MANY_REQUESTS: 'TooManyRequestsError',
   INTERNAL_SERVER: 'InternalServerError',
 };
 
@@ -65,6 +57,15 @@ export class RequestError extends Error {
     return new RequestError(
       ErrorType.UNPROCESSABLE_ENTITY,
       HttpStatusCode.UNPROCESSABLE_ENTITY,
+      true,
+      message
+    );
+  }
+
+  static TooManyRequestsError(message) {
+    return new RequestError(
+      ErrorType.TOO_MANY_REQUESTS,
+      HttpStatusCode.TOO_MANY_REQUESTS,
       true,
       message
     );

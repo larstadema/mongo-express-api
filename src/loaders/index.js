@@ -3,10 +3,14 @@ import { dependencyInjectorLoader } from './dependency-injector';
 import { Logger } from './logger';
 import { mongooseLoader } from './mongoose';
 import { userRepo, keystoreRepo } from '../domains/accounts';
+import { redisLoader } from './redis';
 
 export const appLoader = async ({ expressApp }) => {
   await mongooseLoader();
   Logger.info('✌️ DB loaded and connected!');
+
+  await redisLoader();
+  Logger.info('✌️ Redis loaded and connected!');
 
   await dependencyInjectorLoader({
     repos: [

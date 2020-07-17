@@ -1,0 +1,33 @@
+# Add any directories, files, or patterns you don't want to be tracked by version control
+.idea
+
+# ignore vs code project config files
+.vscode
+.vs
+
+# ignore logs
+logs
+*.log
+
+# git references
+.git
+.gitignore
+
+# ignore 3rd party lib
+node_modules
+
+# Ignore build files
+build
+
+# ignore test converage
+coverage
+
+# git
+.gitignore
+.git
+
+.DS_Store
+
+.docker
+DockerFile
+docker-compose.yml

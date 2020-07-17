@@ -8,7 +8,7 @@ import { SuccessResponse } from '../../../core/api-response';
 
 export const refreshToken = async (req, res) => {
   const logger = Container.get('logger');
-  const authServiceInstance = Container.get(AccountService);
+  const accountServiceInstance = Container.get(AccountService);
 
   logger.silly('Calling refreshToken endpoint');
 
@@ -17,16 +17,16 @@ export const refreshToken = async (req, res) => {
   const accessToken = getAccessToken(req);
 
   if (!accessToken) {
-    throw new RequestError.UnauthorizedError('Not logged in');
+    throw RequestError.UnauthorizedError('Not logged in');
   }
 
   if (!oldRefreshToken) {
-    throw new RequestError.BadRequestError('Missing refresh token cookie');
+    throw RequestError.BadRequestError('Missing refresh token cookie');
   }
 
   const payload = await JWT.decode(accessToken);
 
-  const { refreshToken: newRefreshToken, token } = await authServiceInstance.refreshToken(
+  const { refreshToken: newRefreshToken, token } = await accountServiceInstance.refreshToken(
     payload.sub,
     oldRefreshToken,
     payload.atk,

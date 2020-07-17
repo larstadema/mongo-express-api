@@ -1,17 +1,10 @@
-import argon2 from 'argon2';
-import { randomBytes } from 'crypto';
+import bcrypt from 'bcrypt';
 import config from '../../../config';
 
 export class UserMap {
   static async toPersistence({ password, ...user }) {
     if (password) {
-      const salt = randomBytes(32);
-      const hashOptions = {
-        salt,
-        secret: Buffer.from(config.hashPepper),
-      };
-
-      const passwordHash = await argon2.hash(password, hashOptions);
+      const passwordHash = await bcrypt.hash(password, config.saltRounds);
 
       return {
         ...user,
@@ -27,8 +20,8 @@ export class UserMap {
   }
 
   static toDTO(raw) {
-    const { id, email, role, profile, createdAt, updatedAt, isVerified } = raw;
+    const { id, email, roles, profile, createdAt, updatedAt, isVerified } = raw;
 
-    return { id, email, role, profile, createdAt, updatedAt, isVerified };
+    return { id, email, roles, profile, createdAt, updatedAt, isVerified };
   }
 }

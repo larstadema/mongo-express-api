@@ -7,21 +7,23 @@ import { SuccessMsgResponse } from '../../../core/api-response';
 
 export const deleteById = async (req, res) => {
   const logger = Container.get('logger');
-  const authServiceInstance = Container.get(AccountService);
+  const accountServiceInstance = Container.get(AccountService);
 
   logger.silly('Calling deleteById endpoint');
 
   const { id } = req.params;
 
   if (!isValidObjectId(id)) {
-    throw new RequestError.BadRequestError('Invalid id');
+    throw RequestError.BadRequestError('Invalid id');
   }
 
-  if (req.user.id !== id && req.user.role !== Roles.Admin) {
-    throw new RequestError.UnauthorizedError('Not authorized');
+  const isAdmin = req.user.roles.some((role) => role === Roles.Admin);
+
+  if (req.user.id !== id && !isAdmin) {
+    throw RequestError.UnauthorizedError('Not authorized');
   }
 
-  await authServiceInstance.deleteById(id);
+  await accountServiceInstance.deleteById(id);
 
   new SuccessMsgResponse(
     'Sad to see you go, account removal started. Check email for more information'

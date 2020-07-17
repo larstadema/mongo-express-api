@@ -33,6 +33,8 @@ node_modules/
 
 # dotenv environment variables file
 .env
+.env.development
+.env.production
 .env.test
 
 # Build output
@@ -40,3 +42,9 @@ build
 
 # ignore key
 *.pem
+
+
+.docker/data/db/*
+!.docker/data/db/.gitkeep
+.docker/data/redis/*
+!.docker/data/redis/.gitkeep

@@ -10,6 +10,7 @@ import {
   InternalErrorResponse,
   ConflictResponse,
   UnprocessableEntityResponse,
+  TooManyRequestsResponse,
 } from '../api-response';
 
 const mapRequestContext = (request) => ({
@@ -37,11 +38,11 @@ export const errorMiddleware = async (error, req, res, next) => {
 
   if (isCelebrate(error)) {
     const message = error.joi.details.map((i) => i.message).join(',');
-    requestError = new RequestError.UnprocessableEntityError(message);
+    requestError = RequestError.UnprocessableEntityError(message);
   }
 
   if (!ErrorHandler.isTrustedError(error)) {
-    requestError = new RequestError.InternalServerError(error.message);
+    requestError = RequestError.InternalServerError(error.message);
   }
 
   let errorId;
@@ -66,6 +67,8 @@ export const errorMiddleware = async (error, req, res, next) => {
       return new ConflictResponse(requestError.message).send(res);
     case ErrorType.UNPROCESSABLE_ENTITY:
       return new UnprocessableEntityResponse(requestError.message).send(res);
+    case ErrorType.TOO_MANY_REQUESTS:
+      return new TooManyRequestsResponse('Too many requests', requestError.message).send(res);
     default: {
       let { message } = requestError;
 

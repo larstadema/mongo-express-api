@@ -1,5 +1,4 @@
-import argon2 from 'argon2';
-import config from '../../../config';
+import bcrypt from 'bcrypt';
 import { RequestError } from '../../../core/api-error';
 import { Roles } from '../../../core/roles';
 import { generateToken } from '../../../utils/generate-token';
@@ -25,12 +24,12 @@ class AccountService {
     this.logger.silly('Creating user db record');
     const userRecord = await this.userRepo.save({
       ...userInput,
-      role: Roles.User,
+      roles: [Roles.User],
       verificationToken: generateToken(),
     });
 
     if (!userRecord) {
-      throw new RequestError.InternalServerError('User cannot be created');
+      throw RequestError.InternalServerError('User cannot be created');
     }
 
     // TODO: Replace log with actual email
@@ -44,20 +43,18 @@ class AccountService {
     const userRecord = await this.userRepo.findByEmail(email);
 
     if (!userRecord) {
-      throw new RequestError.NotFoundError('Email or password is incorrect');
+      throw RequestError.NotFoundError('Email or password is incorrect');
     }
 
     if (!userRecord.isVerified) {
-      throw new RequestError.NotFoundError('User not verified');
+      throw RequestError.NotFoundError('User not verified');
     }
 
     this.logger.silly('Checking password');
-    const validPassword = await argon2.verify(userRecord.passwordHash, password, {
-      secret: Buffer.from(config.hashPepper),
-    });
+    const validPassword = await bcrypt.compare(password, userRecord.passwordHash);
 
     if (!validPassword) {
-      throw new RequestError.BadRequestError('Email or password is incorrect');
+      throw RequestError.BadRequestError('Email or password is incorrect');
     }
 
     this.logger.silly('Password is valid!');
@@ -88,7 +85,7 @@ class AccountService {
     const keystoreRecord = await this.keystoreRepo.find(userId, token, accessTokenKey);
 
     if (!keystoreRecord) {
-      throw new RequestError.BadRequestError('Invalid token');
+      throw RequestError.BadRequestError('Invalid token');
     }
 
     const newRefreshTokenRecord = await this.keystoreRepo.save({
@@ -116,7 +113,7 @@ class AccountService {
     const keystoreRecord = await this.keystoreRepo.findByToken(token);
 
     if (!keystoreRecord || !keystoreRecord.isActive) {
-      throw new RequestError.BadRequestError('Invalid token');
+      throw RequestError.BadRequestError('Invalid token');
     }
 
     await this.keystoreRepo.revokeByToken(keystoreRecord.refreshToken, undefined, ipAddress);
@@ -126,7 +123,7 @@ class AccountService {
     const userRecord = await this.userRepo.findByVerificationToken(token);
 
     if (!userRecord) {
-      throw new RequestError.NotFoundError('Token not found');
+      throw RequestError.NotFoundError('Token not found');
     }
 
     await this.userRepo.save({
@@ -162,16 +159,14 @@ class AccountService {
     const userRecord = await this.userRepo.findByResetToken(token);
 
     if (!userRecord) {
-      throw new RequestError.BadRequestError('Invalid token');
+      throw RequestError.BadRequestError('Invalid token');
     }
 
     this.logger.silly('Checking password');
-    const samePassword = await argon2.verify(userRecord.passwordHash, password, {
-      secret: Buffer.from(config.hashPepper),
-    });
+    const samePassword = await bcrypt.compare(password, userRecord.passwordHash);
 
     if (samePassword) {
-      throw new RequestError.ConflictError('Please choose a different password');
+      throw RequestError.ConflictError('Please choose a different password');
     }
 
     await this.userRepo.save({
@@ -192,7 +187,7 @@ class AccountService {
     });
 
     if (!paginatedRecord) {
-      throw new RequestError.BadRequestError('No users found');
+      throw RequestError.BadRequestError('No users found');
     }
 
     return {
@@ -205,7 +200,7 @@ class AccountService {
     const userRecord = await this.userRepo.findById(id);
 
     if (!userRecord) {
-      throw new RequestError.NotFoundError('User not found');
+      throw RequestError.NotFoundError('User not found');
     }
 
     return UserMap.toDTO(userRecord);
@@ -215,7 +210,7 @@ class AccountService {
     const userRecord = await this.userRepo.findById(id);
 
     if (!userRecord) {
-      throw new RequestError.NotFoundError('User not found');
+      throw RequestError.NotFoundError('User not found');
     }
 
     this.keystoreRepo.revokeAllByAccountId(userRecord.id);

@@ -24,6 +24,12 @@ const User = new Schema({
   profile: {
     firstName: String,
     lastName: String,
+    displayName: String,
+    avatar: String,
+  },
+  private: {
+    type: Boolean,
+    default: false,
   },
   verificationToken: String,
   verified: Date,

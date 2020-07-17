@@ -4,11 +4,11 @@ import { SuccessMsgResponse } from '../../../core/api-response';
 
 export const resetPassword = async (req, res) => {
   const logger = Container.get('logger');
-  const authServiceInstance = Container.get(AccountService);
+  const accountServiceInstance = Container.get(AccountService);
 
   logger.silly('Calling resetPassword endpoint');
 
-  await authServiceInstance.resetPassword(req.body);
+  await accountServiceInstance.resetPassword(req.body);
 
   new SuccessMsgResponse('Password reset successful').send(res);
 };

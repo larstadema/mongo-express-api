@@ -15,7 +15,7 @@ export const accountRoutes = (app) => {
     celebrate({
       [Segments.BODY]: Joi.object({
         email: Joi.string().email().required(),
-        password: Joi.string().required(),
+        password: Joi.string().max(64).required(),
       }),
     }),
     wrapAsync(accountController.login)
@@ -28,7 +28,7 @@ export const accountRoutes = (app) => {
     celebrate({
       [Segments.BODY]: Joi.object({
         email: Joi.string().email().required(),
-        password: Joi.string().min(6).required(),
+        password: Joi.string().min(6).max(64).required(),
       }),
     }),
     wrapAsync(accountController.register)
@@ -72,7 +72,7 @@ export const accountRoutes = (app) => {
     celebrate({
       [Segments.BODY]: Joi.object({
         token: Joi.string().required(),
-        password: Joi.string().min(6).required(),
+        password: Joi.string().min(6).max(64).required(),
         confirmPassword: Joi.string().valid(Joi.ref('password')).required(),
       }),
     }),

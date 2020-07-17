@@ -6,7 +6,7 @@ import { SuccessMsgResponse } from '../../../core/api-response';
 
 export const revokeToken = async (req, res) => {
   const logger = Container.get('logger');
-  const authServiceInstance = Container.get(AccountService);
+  const accountServiceInstance = Container.get(AccountService);
 
   logger.silly('Calling revokeToken endpoint');
 
@@ -14,14 +14,16 @@ export const revokeToken = async (req, res) => {
   const ipAddress = req.ip;
 
   if (!token) {
-    throw new RequestError.BadRequestError('Token is required');
+    throw RequestError.BadRequestError('Token is required');
   }
 
-  if (!req.user.ownsToken(token) && req.user.role !== Roles.Admin) {
-    throw new RequestError.UnauthorizedError('Not authorized');
+  const isAdmin = req.user.roles.some((role) => role === Roles.Admin);
+
+  if (!req.user.ownsToken(token) && !isAdmin) {
+    throw RequestError.UnauthorizedError('Not authorized');
   }
 
-  await authServiceInstance.revokeToken(token, ipAddress);
+  await accountServiceInstance.revokeToken(token, ipAddress);
 
   new SuccessMsgResponse('Token revoked').send(res);
 };

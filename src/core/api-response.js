@@ -5,15 +5,16 @@ const StatusCode = {
   INVALID_ACCESS_TOKEN: '10003',
 };
 
-const HttpStatusCode = {
-  SUCCESS: 200,
+export const HttpStatusCode = {
+  OK: 200,
   BAD_REQUEST: 400,
   UNAUTHORIZED: 401,
   FORBIDDEN: 403,
   NOT_FOUND: 404,
   CONFLICT: 409,
   UNPROCESSABLE_ENTITY: 422,
-  INTERNAL_ERROR: 500,
+  TOO_MANY_REQUESTS: 429,
+  INTERNAL_SERVER: 500,
 };
 
 class ApiResponse {
@@ -93,21 +94,33 @@ export class UnprocessableEntityResponse extends ApiResponse {
   }
 }
 
+export class TooManyRequestsResponse extends ApiResponse {
+  constructor(message = 'Too many requests', retryAfter) {
+    super(StatusCode.FAILURE, HttpStatusCode.TOO_MANY_REQUESTS, message);
+    this.retryAfter = retryAfter;
+  }
+
+  send(response) {
+    response.setHeader('Retry-After', this.retryAfter);
+    return super.prepare(response, this);
+  }
+}
+
 export class SuccessMsgResponse extends ApiResponse {
   constructor(message) {
-    super(StatusCode.SUCCESS, HttpStatusCode.SUCCESS, message);
+    super(StatusCode.SUCCESS, HttpStatusCode.OK, message);
   }
 }
 
 export class FailureMsgResponse extends ApiResponse {
   constructor(message) {
-    super(StatusCode.FAILURE, HttpStatusCode.SUCCESS, message);
+    super(StatusCode.FAILURE, HttpStatusCode.OK, message);
   }
 }
 
 export class SuccessResponse extends ApiResponse {
   constructor(message, data) {
-    super(StatusCode.SUCCESS, HttpStatusCode.SUCCESS, message);
+    super(StatusCode.SUCCESS, HttpStatusCode.OK, message);
     this.data = data;
   }
 

@@ -4,11 +4,11 @@ import { SuccessMsgResponse } from '../../../core/api-response';
 
 export const logout = async (req, res) => {
   const logger = Container.get('logger');
-  const authServiceInstance = Container.get(AccountService);
+  const accountServiceInstance = Container.get(AccountService);
 
   logger.silly('Calling logout endpoint');
 
-  await authServiceInstance.logout(req.keystore);
+  await accountServiceInstance.logout(req.keystore);
 
   new SuccessMsgResponse('Logged out').send(res);
 };

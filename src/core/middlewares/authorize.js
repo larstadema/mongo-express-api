@@ -18,7 +18,7 @@ export const authorize = (roles = []) => {
       const validRoles = req.user.roles.filter((role) => rolesArray.includes(role));
 
       if (rolesArray.length && (!validRoles || !validRoles.length)) {
-        return next(new RequestError.UnauthorizedError('Permission denied'));
+        return next(RequestError.UnauthorizedError('Permission denied'));
       }
 
       req.user.ownsToken = (token) => refreshTokens.some((r) => r === token);

@@ -1,0 +1,73 @@
+version: "3.7"
+
+services:
+  app:
+    container_name: app
+    build:
+      context: .
+      target: release
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    restart: unless-stopped
+    env_file: .env
+    command: npm start
+    ports:
+      - '$PORT:$PORT'
+    depends_on:
+      - redis
+      - db
+    networks:
+      - db-network
+      - redis-network
+    healthcheck:
+      test: wget --quiet --tries=1 --spider http://localhost:${PORT}/status/health || exit 1z
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  db:
+    image: mongo:4.2.5
+    container_name: mongo
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=$DB_ADMIN
+      - MONGO_INITDB_ROOT_PASSWORD=$DB_ADMIN_PWD
+      - MONGO_INITDB_DATABASE=$DB_NAME
+    ports:
+      - 27017:27017
+    volumes:
+      - ./scripts/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+      - db-data:/data/db
+    networks:
+      - db-network
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongo db:27017/mongo-express-api --quiet
+      interval: 30s
+      timeout: 10s
+      retries: 5
+  
+  redis:
+    container_name: redis
+    image: redis:5-alpine
+    volumes:
+      - .docker/data/redis:/data
+    restart: unless-stopped
+    networks:
+      - redis-network
+    healthcheck:
+      test: ["CMD", "redis-cli","ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+#Docker Networks
+networks:
+  db-network:
+    driver: bridge
+  redis-network:
+    driver: bridge
+
+volumes:
+  db-data:

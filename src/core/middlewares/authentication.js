@@ -10,7 +10,7 @@ export const authentication = async (req, res, next) => {
   const accessToken = getAccessToken(req);
 
   if (!accessToken) {
-    return next(new RequestError.UnauthorizedError('Not logged in'));
+    return next(RequestError.UnauthorizedError('Not logged in'));
   }
 
   let payload;
@@ -23,7 +23,7 @@ export const authentication = async (req, res, next) => {
   const user = await userRepo.findById(payload.sub);
 
   if (!user) {
-    return next(new RequestError.UnauthorizedError('User not registered'));
+    return next(RequestError.UnauthorizedError('User not registered'));
   }
 
   req.user = user;
@@ -31,7 +31,7 @@ export const authentication = async (req, res, next) => {
   const keystore = await keystoreRepo.GetByAccountIdAndAccessKey(user.id, payload.atk);
 
   if (!keystore) {
-    return next(new RequestError.UnauthorizedError('Invalid access token'));
+    return next(RequestError.UnauthorizedError('Invalid access token'));
   }
 
   req.keystore = keystore;

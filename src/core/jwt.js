@@ -22,7 +22,7 @@ const validatePayload = (payload) => {
     payload.iss !== issuer ||
     payload.aud !== audience
   ) {
-    throw new RequestError.UnauthorizedError('Invalid Access Token');
+    throw RequestError.UnauthorizedError('Invalid Access Token');
   }
 
   return payload;
@@ -63,10 +63,10 @@ export class JWT {
       Logger.debug(error);
 
       if (error.name === 'TokenExpiredError') {
-        throw new RequestError.TokenExpiredError();
+        throw RequestError.TokenExpiredError();
       }
 
-      throw new RequestError.UnauthorizedError('Token is not valid');
+      throw RequestError.UnauthorizedError('Token is not valid');
     }
   }
 
@@ -82,7 +82,7 @@ export class JWT {
       return validatePayload(payload);
     } catch (error) {
       Logger.debug(error);
-      throw new RequestError.UnauthorizedError('Token is not valid');
+      throw RequestError.UnauthorizedError('Token is not valid');
     }
   }
 }

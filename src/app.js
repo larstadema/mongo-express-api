@@ -66,7 +66,8 @@ const startServer = async () => {
     const isTrustedError = ErrorHandler.isTrustedError(error);
 
     ErrorHandler.handleError(
-      isTrustedError ? error : new RequestError.InternalServerError('Uncaught Exception')
+      isTrustedError ? error : RequestError.InternalServerError('Uncaught Exception'),
+      { stack: error.stack }
     );
 
     if (!isTrustedError) {

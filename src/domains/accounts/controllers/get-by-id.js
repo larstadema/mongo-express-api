@@ -7,21 +7,23 @@ import { SuccessResponse } from '../../../core/api-response';
 
 export const getById = async (req, res) => {
   const logger = Container.get('logger');
-  const authServiceInstance = Container.get(AccountService);
+  const accountServiceInstance = Container.get(AccountService);
 
   logger.silly('Calling getById endpoint');
 
   const { id } = req.params;
 
   if (!isValidObjectId(id)) {
-    throw new RequestError.BadRequestError('Invalid id');
+    throw RequestError.BadRequestError('Invalid id');
   }
 
-  if (req.user.id !== id && req.user.role !== Roles.Admin) {
-    throw new RequestError.UnauthorizedError('Not authorized');
+  const isAdmin = req.user.roles.some((role) => role === Roles.Admin);
+
+  if (req.user.id !== id && !isAdmin) {
+    throw RequestError.UnauthorizedError('Not authorized');
   }
 
-  const user = await authServiceInstance.getById(id);
+  const user = await accountServiceInstance.getById(id);
 
   new SuccessResponse('success', user).send(res);
 };
