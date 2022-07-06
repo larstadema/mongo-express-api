@@ -1,10 +1,10 @@
+import Container from 'typedi';
 import { expressLoader } from './express';
 import { dependencyInjectorLoader } from './dependency-injector';
 import { Logger } from './logger';
 import { mongooseLoader } from './mongoose';
 import { userRepo, keystoreRepo, AccountService } from '../domains/accounts';
 import { redisLoader } from './redis';
-import Container from 'typedi';
 
 export const appLoader = async ({ expressApp }) => {
   await mongooseLoader();

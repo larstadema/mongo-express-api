@@ -65,7 +65,7 @@ export class ConflictResponse extends ApiResponse {
 }
 
 export class NotFoundResponse extends ApiResponse {
-  constructor(message = 'Not Found', url) {
+  constructor(message = 'Not Found', url) { // eslint-disable-line default-param-last
     super(StatusCode.FAILURE, HttpStatusCode.NOT_FOUND, message);
     this.url = url;
   }
@@ -82,7 +82,7 @@ export class ForbiddenResponse extends ApiResponse {
 }
 
 export class InternalErrorResponse extends ApiResponse {
-  constructor(message = 'Internal server', errorId) {
+  constructor(message = 'Internal server', errorId) { // eslint-disable-line default-param-last
     super(StatusCode.FAILURE, HttpStatusCode.INTERNAL_SERVER, message);
     this.errorId = errorId;
   }
@@ -95,7 +95,7 @@ export class UnprocessableEntityResponse extends ApiResponse {
 }
 
 export class TooManyRequestsResponse extends ApiResponse {
-  constructor(message = 'Too many requests', retryAfter) {
+  constructor(message = 'Too many requests', retryAfter) { // eslint-disable-line default-param-last
     super(StatusCode.FAILURE, HttpStatusCode.TOO_MANY_REQUESTS, message);
     this.retryAfter = retryAfter;
   }

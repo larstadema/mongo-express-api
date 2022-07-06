@@ -6,7 +6,7 @@ import { AsyncLocalStorageInstance } from './async-local-storage';
 // import config from '../config';
 // import mailgun from 'mailgun-js';
 
-export const dependencyInjectorLoader = async ({ repos, services }) => {
+export const dependencyInjectorLoader = async ({ repos }) => {
   try {
     repos.forEach((m) => {
       Container.set(m.name, m.repo);

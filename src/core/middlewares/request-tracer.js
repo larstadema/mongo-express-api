@@ -32,8 +32,7 @@ const wrapHttpEmitters = (req, res, als) => {
 export const requestTracerMiddleware = ({
   useHeader = false,
   headerName = 'X-Request-Id',
-} = {}) => {
-  return (req, res, next) => {
+} = {}) => (req, res, next) => {
     const als = Container.get('als');
     let requestId;
     if (useHeader) {
@@ -46,4 +45,3 @@ export const requestTracerMiddleware = ({
       next();
     });
   };
-};

@@ -21,9 +21,7 @@ const mapRequestContext = (request) => ({
 });
 
 // No need for crypto as this is just used for logging ids
-const randomString = (length) => {
-  return Math.round(36 ** length + 1 - Math.random() * 36 ** length).toString(36);
-};
+const randomString = (length) => Math.round(36 ** length + 1 - Math.random() * 36 ** length).toString(36);
 
 const generateErrorId = () => {
   const ts = Date.now();

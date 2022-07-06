@@ -1,5 +1,3 @@
 import { randomBytes } from 'crypto';
 
-export const generateToken = () => {
-  return randomBytes(40).toString('hex');
-};
+export const generateToken = () => randomBytes(40).toString('hex');
