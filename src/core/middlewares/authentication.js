@@ -2,11 +2,13 @@ import { Container } from 'typedi';
 import { RequestError } from '../api-error';
 import { JWT } from '../jwt';
 import { getAccessToken } from '../../utils/get-access-token';
+import { getRequestOrigin } from '../../utils/get-request-origin';
 
 export const authentication = async (req, res, next) => {
   const userRepo = Container.get('userRepo');
   const keystoreRepo = Container.get('keystoreRepo');
 
+  const country = getRequestOrigin(req);
   const accessToken = getAccessToken(req);
 
   if (!accessToken) {
@@ -27,6 +29,7 @@ export const authentication = async (req, res, next) => {
   }
 
   req.user = user;
+  req.country = country;
 
   const keystore = await keystoreRepo.GetByAccountIdAndAccessKey(user.id, payload.atk);
 
