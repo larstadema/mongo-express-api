@@ -1,13 +1,12 @@
 import { Container } from 'typedi';
 import { isValidObjectId } from 'mongoose';
-import { AccountService } from '../services';
 import { RequestError } from '../../../core/api-error';
 import { Roles } from '../../../core/roles';
 import { SuccessResponse } from '../../../core/api-response';
 
 export const getById = async (req, res) => {
   const logger = Container.get('logger');
-  const accountServiceInstance = Container.get(AccountService);
+  const accountServiceInstance = Container.get('AccountService');
 
   logger.silly('Calling getById endpoint');
 

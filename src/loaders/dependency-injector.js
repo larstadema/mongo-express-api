@@ -6,7 +6,7 @@ import { AsyncLocalStorageInstance } from './async-local-storage';
 // import config from '../config';
 // import mailgun from 'mailgun-js';
 
-export const dependencyInjectorLoader = async ({ repos }) => {
+export const dependencyInjectorLoader = async ({ repos, services }) => {
   try {
     repos.forEach((m) => {
       Container.set(m.name, m.repo);
@@ -22,7 +22,7 @@ export const dependencyInjectorLoader = async ({ repos }) => {
     // LoggerInstance.info('✌️ Agenda injected into container');
 
     // return { agenda: agendaInstance };
-    return {};
+    return Promise.resolve();
   } catch (e) {
     LoggerInstance.error('🔥 Error on dependency injector loader: %o', e);
     throw e;

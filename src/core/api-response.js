@@ -83,7 +83,7 @@ export class ForbiddenResponse extends ApiResponse {
 
 export class InternalErrorResponse extends ApiResponse {
   constructor(message = 'Internal server', errorId) {
-    super(StatusCode.FAILURE, HttpStatusCode.INTERNAL_ERROR, message);
+    super(StatusCode.FAILURE, HttpStatusCode.INTERNAL_SERVER, message);
     this.errorId = errorId;
   }
 }

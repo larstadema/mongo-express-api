@@ -2,15 +2,16 @@ import { expressLoader } from './express';
 import { dependencyInjectorLoader } from './dependency-injector';
 import { Logger } from './logger';
 import { mongooseLoader } from './mongoose';
-import { userRepo, keystoreRepo } from '../domains/accounts';
+import { userRepo, keystoreRepo, AccountService } from '../domains/accounts';
 import { redisLoader } from './redis';
+import Container from 'typedi';
 
 export const appLoader = async ({ expressApp }) => {
   await mongooseLoader();
-  Logger.info('✌️ DB loaded and connected!');
+  Logger.info('✌️  DB loaded and connected!');
 
   await redisLoader();
-  Logger.info('✌️ Redis loaded and connected!');
+  Logger.info('✌️  Redis loaded and connected!');
 
   await dependencyInjectorLoader({
     repos: [
@@ -22,10 +23,13 @@ export const appLoader = async ({ expressApp }) => {
         name: 'keystoreRepo',
         repo: keystoreRepo,
       },
-    ],
+    ]
   });
-  Logger.info('✌️ Dependency Injector loaded');
+  Logger.info('✌️  Dependency Injector loaded');
 
+  Container.set('AccountService', new AccountService(Container));
+
+  Logger.info('✌️  Services loaded');
   await expressLoader(expressApp);
-  Logger.info('✌️ Express loaded');
+  Logger.info('✌️  Express loaded');
 };

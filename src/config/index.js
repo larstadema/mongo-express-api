@@ -1,9 +1,9 @@
 import * as dotenv from 'dotenv';
 import ms from 'ms';
 
-dotenv.config();
-
 process.env.NODE_ENV = process.env.NODE_ENV || 'development';
+
+dotenv.config({ path: `.env.${process.env.NODE_ENV}`});
 
 const envFound = dotenv.config();
 

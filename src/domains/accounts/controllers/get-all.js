@@ -1,10 +1,9 @@
 import { Container } from 'typedi';
-import { AccountService } from '../services';
 import { SuccessResponse } from '../../../core/api-response';
 
 export const getAll = async (req, res) => {
   const logger = Container.get('logger');
-  const accountServiceInstance = Container.get(AccountService);
+  const accountServiceInstance = Container.get('AccountService');
 
   logger.silly('Calling getAll endpoint');
 

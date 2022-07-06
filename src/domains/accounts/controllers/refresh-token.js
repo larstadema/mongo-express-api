@@ -1,5 +1,4 @@
 import { Container } from 'typedi';
-import { AccountService } from '../services';
 import { setTokenCookie } from '../../../utils/set-token-cookie';
 import { RequestError } from '../../../core/api-error';
 import { getAccessToken } from '../../../utils/get-access-token';
@@ -8,7 +7,7 @@ import { SuccessResponse } from '../../../core/api-response';
 
 export const refreshToken = async (req, res) => {
   const logger = Container.get('logger');
-  const accountServiceInstance = Container.get(AccountService);
+  const accountServiceInstance = Container.get('AccountService');
 
   logger.silly('Calling refreshToken endpoint');
 

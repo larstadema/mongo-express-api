@@ -1,12 +1,11 @@
 import { Container } from 'typedi';
-import { AccountService } from '../services';
 import { RequestError } from '../../../core/api-error';
 import { Roles } from '../../../core/roles';
 import { SuccessMsgResponse } from '../../../core/api-response';
 
 export const revokeToken = async (req, res) => {
   const logger = Container.get('logger');
-  const accountServiceInstance = Container.get(AccountService);
+  const accountServiceInstance = Container.get('AccountService');
 
   logger.silly('Calling revokeToken endpoint');
 

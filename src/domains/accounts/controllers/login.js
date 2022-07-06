@@ -1,5 +1,4 @@
 import { Container } from 'typedi';
-import { AccountService } from '../services';
 import { setTokenCookie } from '../../../utils/set-token-cookie';
 import { SuccessResponse, TooManyRequestsResponse } from '../../../core/api-response';
 import { limitSlowBrute, limitConsecutiveFails } from '../../../core/rate-limiters';
@@ -13,7 +12,7 @@ const limiterConsecutiveFailsByUsernameAndIP = limitConsecutiveFails(
 
 export const login = async (req, res) => {
   const logger = Container.get('logger');
-  const accountServiceInstance = Container.get(AccountService);
+  const accountServiceInstance = Container.get('AccountService');
 
   logger.silly('Calling login endpoint');
 

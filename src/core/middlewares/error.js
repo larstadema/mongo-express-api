@@ -1,4 +1,4 @@
-import { isCelebrate } from 'celebrate';
+import { isCelebrateError } from 'celebrate';
 import { ErrorHandler } from '../api-error-handler';
 import { ErrorType, RequestError } from '../api-error';
 import {
@@ -36,7 +36,7 @@ const generateErrorId = () => {
 export const errorMiddleware = async (error, req, res, next) => {
   let requestError = error;
 
-  if (isCelebrate(error)) {
+  if (isCelebrateError(error)) {
     const message = error.joi.details.map((i) => i.message).join(',');
     requestError = RequestError.UnprocessableEntityError(message);
   }
